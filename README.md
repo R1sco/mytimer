@@ -9,7 +9,7 @@ A simple, elegant, and feature-rich countdown timer for your terminal. It displa
 
 ---
 
-## ✨ Features
+## Features
 
 * **Customizable Color:** Easily change the timer's color using ANSI escape codes within the script.
 * **Flexible Duration Input:** Set timers in hours (`h`), minutes (`m`), or seconds (`s`).
@@ -29,7 +29,7 @@ A simple, elegant, and feature-rich countdown timer for your terminal. It displa
 
 ---
 
-## 🚀 Installation
+## Installation
 
 Make the script a global command so you can call it from anywhere in your terminal.
 
@@ -48,9 +48,30 @@ Make the script a global command so you can call it from anywhere in your termin
 
 ## Usage
 
-The command takes a duration and an optional message.
+**Syntax:**
+timer <duration> [custom_message]
 
-```bash
-mytimer 10(h/m/s) (custom description)
-example : mytimer 10s Take A Break
-```
+
+**Examples:**
+
+* **Set a 30-second timer:**
+    ```bash
+    timer 30s
+    ```
+
+* **Set a 5-minute timer with a custom message:**
+    ```bash
+    timer 5m "Take a break"
+    ```
+
+* **Set a 1-hour timer for a specific task:**
+    ```bash
+    timer 1h "Compile the project"
+    ```
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
