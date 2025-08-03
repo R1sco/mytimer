@@ -4,7 +4,8 @@
 
 A simple, elegant, and feature-rich countdown timer for your terminal. It displays the remaining time in a large, solid ASCII digital clock format, providing a clear visual indicator for any task. Written in pure Bash.
 
-![Timer](https://imgur.com/a/9CrFhmZ)
+
+![timer](https://i.imgur.com/Cm9vAQG.png)
 
 ---
 
