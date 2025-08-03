@@ -1,0 +1,125 @@
+#!/bin/bash
+
+# How to use function
+usage() {
+    echo "Usage:   $0 <duration> [custom_message]"
+    echo "Example: $0 10s"
+    echo "         $0 5m \"Take a Break session\""
+    exit 1
+}
+
+# Function to clear and show cursor (Ex: Ctrl+C)
+cleanup() {
+    tput cnorm
+    echo
+    exit
+}
+
+# Cleanup (Ctrl+C)
+trap cleanup INT
+
+# --- ASCII (SOLID) ---
+LIGHT_GREEN='\e[92m'
+NC='\e[0m' # No Color (for reset)
+
+DIGIT_0=$'█████\n█   █\n█   █\n█   █\n█████'
+DIGIT_1=$'  ██ \n████ \n  ██ \n  ██ \n█████'
+DIGIT_2=$'█████\n    █\n█████\n█    \n█████'
+DIGIT_3=$'█████\n    █\n ████\n    █\n█████'
+DIGIT_4=$'█   █\n█   █\n█████\n    █\n    █'
+DIGIT_5=$'█████\n█    \n█████\n    █\n█████'
+DIGIT_6=$'█████\n█    \n█████\n█   █\n█████'
+DIGIT_7=$'█████\n    █\n   █ \n  █  \n █   '
+DIGIT_8=$'█████\n█   █\n█████\n█   █\n█████'
+DIGIT_9=$'█████\n█   █\n█████\n    █\n█████'
+COLON=$'     \n ██  \n     \n ██  \n     '
+# ---------------------------------------------
+
+display_time_ascii() {
+    local time_str="$1"
+    local parts=()
+    for (( i=0; i<${#time_str}; i++ )); do
+        char="${time_str:$i:1}"
+        digit_var="DIGIT_$char"
+        parts+=("${!digit_var}")
+        if [ $i -eq 1 ] || [ $i -eq 3 ]; then
+            parts+=("$COLON")
+        fi
+    done
+
+    for i in {1..5}; do
+        row_str=""
+        for part in "${parts[@]}"; do
+            line=$(echo -e "$part" | sed -n "${i}p")
+            row_str+="$line  "
+        done
+        echo -e "${LIGHT_GREEN}${row_str}${NC}"
+    done
+}
+
+
+if [ -z "$1" ]; then
+    usage
+fi
+
+duration_input=$1
+shift
+custom_message="$@"
+
+if [ -z "$custom_message" ]; then
+  message="timer"
+else
+  message="$custom_message"
+fi
+
+number=$(echo "$duration_input" | sed 's/[smh]//g')
+unit=$(echo "$duration_input" | grep -o '[smh]$')
+
+case "$unit" in
+    s) total_seconds=$number ;;
+    m) total_seconds=$((number * 60)) ;;
+    h) total_seconds=$((number * 3600)) ;;
+    *) usage ;;
+esac
+
+clear
+tput civis
+echo "Timer running for: $duration_input $message"
+echo "----------------------------------------------------"
+echo
+echo
+echo
+echo
+echo
+echo "(Press Ctrl+C to stop)"
+echo
+tput sc
+
+current_seconds=$total_seconds
+while [ $current_seconds -ge 0 ]; do
+    hours=$((current_seconds / 3600))
+    minutes=$(( (current_seconds % 3600) / 60 ))
+    seconds=$((current_seconds % 60))
+    time_string=$(printf "%02d%02d%02d" $hours $minutes $seconds)
+    
+    tput rc
+    display_time_ascii "$time_string"
+
+    if [ $current_seconds -eq 0 ]; then
+        break
+    fi
+
+    sleep 1
+    current_seconds=$((current_seconds - 1))
+done
+
+echo -e "\n\n\n\n\n\n"
+tput cnorm
+echo "Time's up! ⏰"
+if command -v notify-send &> /dev/null; then
+    notify-send "Timer Finished" "Your ${duration_input} ${message} has ended." -u critical
+fi
+for i in {1..5}; do 
+    echo -en "\007"
+    sleep 0.5
+done
